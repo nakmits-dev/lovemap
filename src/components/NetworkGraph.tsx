@@ -20,11 +20,26 @@ const NetworkGraph: React.FC = () => {
   const [showMaleToFemale, setShowMaleToFemale] = useState(true);
   const [showProfile, setShowProfile] = useState<string | null>(null);
 
-  const handleToggleGender = (value: boolean) => {
-    setShowMaleToFemale(value);
+  const resetView = () => {
     setSelectedPerson(null);
     setShowProfile(null);
     setSelectedRelationship(null);
+    
+    if (sigmaRef.current) {
+      sigmaRef.current.getCamera().animate({
+        x: 0,
+        y: 0,
+        ratio: window.innerWidth < 768 ? 0.8 : 0.5,
+        angle: 0
+      }, {
+        duration: 600
+      });
+    }
+  };
+
+  const handleToggleGender = (value: boolean) => {
+    setShowMaleToFemale(value);
+    resetView();
     if (document.activeElement instanceof HTMLElement) {
       document.activeElement.blur();
     }
@@ -40,7 +55,7 @@ const NetworkGraph: React.FC = () => {
     return Math.max(baseSize, baseSize + (targetCount * 2));
   };
 
-  const calculateRandomPositions = () => {
+  const calculateNodePositions = () => {
     const positions: { id: string; x: number; y: number }[] = [];
     const radius = Math.min(
       window.innerWidth < 768 ? window.innerWidth * 0.4 : window.innerWidth * 0.35,
@@ -50,35 +65,28 @@ const NetworkGraph: React.FC = () => {
     const males = people.filter(p => p.gender === 'male');
     const females = people.filter(p => p.gender === 'female');
     
-    // ランダムな角度と距離でノードを配置
-    const randomPosition = () => {
-      const angle = Math.random() * 2 * Math.PI;
-      const distance = Math.random() * radius;
-      return {
-        x: distance * Math.cos(angle),
-        y: distance * Math.sin(angle)
-      };
-    };
+    const maxCount = Math.max(males.length, females.length);
+    const angleStep = (2 * Math.PI) / (maxCount * 2);
 
-    // 男性ノードの配置
-    males.forEach(male => {
-      const pos = randomPosition();
-      positions.push({
-        id: male.id,
-        x: pos.x,
-        y: pos.y
-      });
-    });
-
-    // 女性ノードの配置
-    females.forEach(female => {
-      const pos = randomPosition();
-      positions.push({
-        id: female.id,
-        x: pos.x,
-        y: pos.y
-      });
-    });
+    for (let i = 0; i < maxCount; i++) {
+      if (i < males.length) {
+        const angle = i * 2 * angleStep;
+        positions.push({
+          id: males[i].id,
+          x: radius * Math.cos(angle),
+          y: radius * Math.sin(angle)
+        });
+      }
+      
+      if (i < females.length) {
+        const angle = (i * 2 + 1) * angleStep;
+        positions.push({
+          id: females[i].id,
+          x: radius * Math.cos(angle),
+          y: radius * Math.sin(angle)
+        });
+      }
+    }
 
     return positions;
   };
@@ -94,7 +102,7 @@ const NetworkGraph: React.FC = () => {
     const graph = new Graph();
     graphRef.current = graph;
 
-    const positions = calculateRandomPositions();
+    const positions = calculateNodePositions();
 
     people.forEach(person => {
       const position = positions.find(p => p.id === person.id);
@@ -224,6 +232,7 @@ const NetworkGraph: React.FC = () => {
     const handleResize = () => {
       if (sigmaRef.current) {
         sigmaRef.current.refresh();
+        resetView();
       }
     };
 
@@ -240,6 +249,11 @@ const NetworkGraph: React.FC = () => {
       window.removeEventListener('resize', handleResize);
     };
   }, [people, relationships, setSelectedRelationship, showMaleToFemale, selectedPerson]);
+
+  // データ変更時にビューをリセット
+  useEffect(() => {
+    resetView();
+  }, [people.length, relationships.length]);
 
   return (
     <div className="flex flex-col flex-grow relative bg-slate-50">
