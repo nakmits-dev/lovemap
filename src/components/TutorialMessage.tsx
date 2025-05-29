@@ -82,3 +82,5 @@ const TutorialMessage: React.FC = () => {
     </div>
   );
 };
+
+export default TutorialMessage
