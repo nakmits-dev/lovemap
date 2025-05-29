@@ -50,7 +50,6 @@ const NetworkGraph: React.FC = () => {
     const males = people.filter(p => p.gender === 'male');
     const females = people.filter(p => p.gender === 'female');
     
-    // ランダムな角度と距離でノードを配置
     const randomPosition = () => {
       const angle = Math.random() * 2 * Math.PI;
       const distance = Math.random() * radius;
@@ -60,7 +59,6 @@ const NetworkGraph: React.FC = () => {
       };
     };
 
-    // 男性ノードの配置
     males.forEach(male => {
       const pos = randomPosition();
       positions.push({
@@ -70,7 +68,6 @@ const NetworkGraph: React.FC = () => {
       });
     });
 
-    // 女性ノードの配置
     females.forEach(female => {
       const pos = randomPosition();
       positions.push({
