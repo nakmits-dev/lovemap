@@ -29,7 +29,7 @@ const TutorialMessage: React.FC = () => {
   const message = messages[currentStep];
 
   return (
-    <div className="fixed bottom-4 left-1/2 -translate-x-1/2 w-full max-w-md mx-4 bg-white rounded-lg shadow-lg z-50">
+    <div className="fixed bottom-4 left-1/2 -translate-x-1/2 w-full max-w-sm mx-4 bg-white rounded-lg shadow-lg z-50">
       <div className="p-4">
         <div className="flex justify-between items-start mb-2">
           <h3 className="text-lg font-semibold text-slate-800">{message.title}</h3>
@@ -83,4 +83,4 @@ const TutorialMessage: React.FC = () => {
   );
 };
 
-export default TutorialMessage
+export default TutorialMessage;

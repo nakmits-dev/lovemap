@@ -115,7 +115,7 @@ const NetworkGraph: React.FC = () => {
 
           if (isValidRelation && !graph.hasEdge(rel.source, rel.target)) {
             graph.addEdge(rel.source, rel.target, {
-              size: window.innerWidth < 768 ? 1 : 2,
+              size: window.innerWidth < 768 ? 2 : 3,
               label: rel.relation,
               type: 'arrow',
               color: sourcePerson.gender === 'male' ? '#3b82f6' : '#ec4899',
@@ -176,7 +176,7 @@ const NetworkGraph: React.FC = () => {
 
         return {
           ...data,
-          size: isHighlighted ? (window.innerWidth < 768 ? 2 : 3) : (window.innerWidth < 768 ? 1 : 2),
+          size: isHighlighted ? (window.innerWidth < 768 ? 3 : 4) : (window.innerWidth < 768 ? 2 : 3),
           color: sourcePerson?.gender === 'male' ? '#3b82f6' : '#ec4899',
           label: isHighlighted ? relationship?.relation || '' : '',
           labelSize: window.innerWidth < 768 ? 10 : 12,
