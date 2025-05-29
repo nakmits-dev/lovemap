@@ -191,9 +191,9 @@ const NetworkGraph: React.FC = () => {
     const handleNodeClick = (e: any) => {
       if (selectedPerson === e.node) {
         setShowProfile(e.node);
-        setSelectedPerson(null);
       } else {
         setSelectedPerson(prev => prev === e.node ? null : e.node);
+        setShowProfile(null);
       }
     };
 
@@ -207,6 +207,7 @@ const NetworkGraph: React.FC = () => {
     const handleStageClick = (e: any) => {
       if (!e.node && !e.edge) {
         setSelectedPerson(null);
+        setShowProfile(null);
       }
     };
 
