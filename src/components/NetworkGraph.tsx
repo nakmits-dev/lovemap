@@ -20,26 +20,11 @@ const NetworkGraph: React.FC = () => {
   const [showMaleToFemale, setShowMaleToFemale] = useState(true);
   const [showProfile, setShowProfile] = useState<string | null>(null);
 
-  const resetView = () => {
+  const handleToggleGender = (value: boolean) => {
+    setShowMaleToFemale(value);
     setSelectedPerson(null);
     setShowProfile(null);
     setSelectedRelationship(null);
-    
-    if (sigmaRef.current) {
-      sigmaRef.current.getCamera().animate({
-        x: 0,
-        y: 0,
-        ratio: window.innerWidth < 768 ? 0.8 : 0.5,
-        angle: 0
-      }, {
-        duration: 600
-      });
-    }
-  };
-
-  const handleToggleGender = (value: boolean) => {
-    setShowMaleToFemale(value);
-    resetView();
     if (document.activeElement instanceof HTMLElement) {
       document.activeElement.blur();
     }
@@ -232,7 +217,6 @@ const NetworkGraph: React.FC = () => {
     const handleResize = () => {
       if (sigmaRef.current) {
         sigmaRef.current.refresh();
-        resetView();
       }
     };
 
@@ -249,11 +233,6 @@ const NetworkGraph: React.FC = () => {
       window.removeEventListener('resize', handleResize);
     };
   }, [people, relationships, setSelectedRelationship, showMaleToFemale, selectedPerson]);
-
-  // データ変更時にビューをリセット
-  useEffect(() => {
-    resetView();
-  }, [people.length, relationships.length]);
 
   return (
     <div className="flex flex-col flex-grow relative bg-slate-50">
