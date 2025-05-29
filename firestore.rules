@@ -1,0 +1,35 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // 基本的なデータ検証ルール
+    function isValidPerson(data) {
+      return data.name is string
+        && data.name.size() > 0
+        && (data.gender == 'male' || data.gender == 'female')
+        && (!('profile' in data) || data.profile is string);
+    }
+    
+    function isValidRelationship(data) {
+      return data.source is string
+        && data.target is string
+        && data.relation is string
+        && data.relation.size() > 0;
+    }
+    
+    // 人物コレクション
+    match /people/{personId} {
+      allow read: if true;
+      allow create: if isValidPerson(request.resource.data);
+      allow update: if isValidPerson(request.resource.data);
+      allow delete: if true;
+    }
+    
+    // 関係性コレクション
+    match /relationships/{relationshipId} {
+      allow read: if true;
+      allow create: if isValidRelationship(request.resource.data);
+      allow update: if isValidRelationship(request.resource.data);
+      allow delete: if true;
+    }
+  }
+}
